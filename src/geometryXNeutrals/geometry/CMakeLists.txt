@@ -16,7 +16,8 @@ target_link_libraries("geometry_neutrals_${GEOMETRY_VARIANT}"
         gyselalibxx::moments
         gyselalibxx::utils
         gyselalibxx::geometry_${GEOMETRY_VARIANT}
-	voicexx::spline_definitions
+        gyselalibxx::interpolation
+        voicexx::spline_definitions
 )
 add_library("voicexx::geometry_neutrals_${GEOMETRY_VARIANT}" ALIAS "geometry_neutrals_${GEOMETRY_VARIANT}")
 

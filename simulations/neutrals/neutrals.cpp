@@ -48,7 +48,7 @@
 #include "singlemodeperturbinitialisation.hpp"
 #include "species_info.hpp"
 #include "species_init.hpp"
-#include "spline_interpolator.hpp"
+#include "spline_interpolation.hpp"
 #include "splitrighthandsidesolver.hpp"
 #include "splitvlasovsolver.hpp"
 
@@ -161,9 +161,9 @@ int main(int argc, char** argv)
     int const nbstep_diag = int(time_diag / deltat);
 
     // Creating operators
-    BslAdvectionSpatial<GeometryXVx, SplineInterpolatorX> const advection_x(spline_x_interpolation);
+    BslAdvectionSpatial<GeometryXVx, SplineInterpolatorX> const advection_x(spline_interpolation_x);
     BslAdvectionVelocity<GeometryXVx, SplineInterpolatorVx> const advection_vx(
-            spline_vx_interpolation);
+            spline_interpolation_vx);
 
     // list of rhs operators
     std::vector<std::reference_wrapper<IRightHandSide const>> rhs_operators;

@@ -6,9 +6,10 @@
 #include "geometry_neutrals.hpp"
 #include "geometry_xvx.hpp"
 #include "gridneutral_interpolator.hpp"
+#include "spline_definitions_xvx.hpp"
 
 GridNeutralInterpolator::GridNeutralInterpolator(
-        SplineXBuilder const& spline_builder_on_X,
+        SplineInterpolatorX::BuilderType const& spline_builder_on_X,
         SplineXNeutralsBuilder const& spline_builder_on_Xn,
         SplineX_GridXnEvaluator const& evaluator_from_X_to_Xn,
         SplineXn_GridXEvaluator const& evaluator_from_Xn_to_X)

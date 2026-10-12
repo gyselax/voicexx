@@ -15,6 +15,7 @@ find_package(paraconf REQUIRED COMPONENTS C)
 add_compile_definitions(KP_KERNEL_TIMER_PATH="${CMAKE_CURRENT_BINARY_DIR}/gyselalibxx/kokkos-tools/profiling/simple-kernel-timer/libkp_kernel_timer.so")
 
 set(GEOMETRY_XVx_VARIANTS_LIST xperiod_vx xnonperiod_vx xperiod_vx_user_defined_grid xnonperiod_vx_user_defined_grid)
+set(NONPERIOD_GEOMETRY_XVx_VARIANTS_LIST xnonperiod_vx xnonperiod_vx_user_defined_grid)
 
 if (${VOICEXX_BUILD_TESTING})
     set(GYSELALIBXX_INCLUDE_TESTING_DEPENDENCIES ON CACHE BOOL "Ensure gyselalibxx testing dependencies are available")

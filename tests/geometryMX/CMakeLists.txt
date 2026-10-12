@@ -3,7 +3,7 @@
 
 include(GoogleTest)
 
-set(BASIC_GEOMETRY_XVx_VARIANTS_LIST xperiod_vx xnonperiod_vx)
+set(BASIC_GEOMETRY_XVx_VARIANTS_LIST xnonperiod_vx)
 
 foreach(GEOMETRY_VARIANT IN LISTS BASIC_GEOMETRY_XVx_VARIANTS_LIST)
 

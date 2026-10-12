@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 
-foreach(GEOMETRY_VARIANT IN LISTS GEOMETRY_XVx_VARIANTS_LIST)
+foreach(GEOMETRY_VARIANT IN LISTS NONPERIOD_GEOMETRY_XVx_VARIANTS_LIST)
 
 add_executable(neutrals_owngrid_${GEOMETRY_VARIANT} neutrals_owngrid.cpp)
 target_link_libraries(neutrals_owngrid_${GEOMETRY_VARIANT}

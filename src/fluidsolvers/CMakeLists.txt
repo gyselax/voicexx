@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 
-foreach(GEOMETRY_VARIANT IN LISTS GEOMETRY_XVx_VARIANTS_LIST)
+foreach(GEOMETRY_VARIANT IN LISTS NONPERIOD_GEOMETRY_XVx_VARIANTS_LIST)
 
 add_library("fluidsolver_${GEOMETRY_VARIANT}" STATIC
     samegridfluidsolver.cpp

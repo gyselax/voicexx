@@ -6,7 +6,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "Lagrange_interpolator.hpp"
 #include "bsl_advection_vx.hpp"
 #include "bsl_advection_x.hpp"
 #include "charge_exchange.hpp"
@@ -28,7 +27,7 @@
 #include "samegridfluidsolver.hpp"
 #include "singlemodeperturbinitialisation.hpp"
 #include "species_info.hpp"
-#include "spline_interpolator.hpp"
+#include "spline_interpolation.hpp"
 #include "splitvlasovsolver.hpp"
 #include "trapezoid_quadrature.hpp"
 
@@ -61,8 +60,8 @@ static void TestKineticFluidCoupling()
     IdxRangeVx meshVx(SplineInterpPointsVx::get_domain<GridVx>());
     IdxRangeXVx meshXVx(meshX, meshVx);
 
-    SplineXBuilder const builder_x(meshX);
-    SplineVxBuilder const builder_vx(meshVx);
+    SplineInterpolatorX const interpolator_x(meshX);
+    SplineInterpolatorVx const interpolator_vx(meshVx);
 
     // Kinetic species index range initialisation
     IdxStepSp const nb_kinspecies(2);
@@ -167,42 +166,21 @@ static void TestKineticFluidCoupling()
     ConstantFluidInitialisation<GridX> fluid_init(get_const_field(moments_init));
     fluid_init(fluid_moments);
 
-#ifdef PERIODIC_RDIMX
-    ddc::PeriodicExtrapolationRule<X> bv_x_min;
-    ddc::PeriodicExtrapolationRule<X> bv_x_max;
-#else
-    ddc::ConstantExtrapolationRule<X> bv_x_min(x_min);
-    ddc::ConstantExtrapolationRule<X> bv_x_max(x_max);
-#endif
 
-    // Creating operators
-    SplineXEvaluator const spline_x_evaluator(bv_x_min, bv_x_max);
-    PreallocatableSplineInterpolator const
-            spline_x_interpolator(builder_x, spline_x_evaluator, meshXVx);
-
-    IdxStepVx static constexpr gwvx {0};
-    LagrangeInterpolator<GridVx, BCond::DIRICHLET, BCond::DIRICHLET, GridX, GridVx> const
-            lagrange_vx_non_preallocatable_interpolator(3, gwvx);
-    PreallocatableLagrangeInterpolator<
-            GridVx,
-            BCond::DIRICHLET,
-            BCond::DIRICHLET,
-            GridX,
-            GridVx> const lagrange_vx_interpolator(lagrange_vx_non_preallocatable_interpolator);
-
-    BslAdvectionSpatial<GeometryXVx, GridX> const advection_x(spline_x_interpolator);
-    BslAdvectionVelocity<GeometryXVx, GridVx> const advection_vx(lagrange_vx_interpolator);
+    BslAdvectionSpatial<GeometryXVx, SplineInterpolatorX> const advection_x(interpolator_x);
+    BslAdvectionVelocity<GeometryXVx, SplineInterpolatorVx> const advection_vx(interpolator_vx);
 
     SplitVlasovSolver const vlasov(advection_x, advection_vx);
 
-    DFieldMemVx const quadrature_coeffs(neumann_spline_quadrature_coefficients<
-                                        Kokkos::DefaultExecutionSpace>(meshVx, builder_vx));
+    DFieldMemVx const quadrature_coeffs(
+            neumann_spline_quadrature_coefficients<
+                    Kokkos::DefaultExecutionSpace>(meshVx, interpolator_vx.get_builder()));
 
     ChargeDensityCalculator rhs(get_const_field(quadrature_coeffs));
 #ifdef PERIODIC_RDIMX
     FFTPoissonSolver<IdxRangeX> poisson_solver(meshX);
 #else
-    FEM1DPoissonSolver const poisson_solver(builder_x, spline_x_evaluator);
+    FEM1DPoissonSolver const poisson_solver(interpolator_x);
 #endif
     QNSolver const poisson(poisson_solver, rhs);
 
@@ -225,8 +203,8 @@ static void TestKineticFluidCoupling()
             ionisation,
             recombination,
             normalisation_coeff,
-            builder_x,
-            spline_x_evaluator,
+            interpolator_x.get_builder(),
+            interpolator_x.get_evaluator(),
             get_const_field(quadrature_coeffs_neutrals),
             neutrals_wall_extent,
             neutrals_wall_stiffness,

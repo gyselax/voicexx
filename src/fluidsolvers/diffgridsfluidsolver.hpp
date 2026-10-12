@@ -7,6 +7,7 @@
 #include "gridneutral_interpolator.hpp"
 #include "ifluidsolver.hpp"
 #include "ireactionrate.hpp"
+#include "spline_definitions_xvx.hpp"
 
 /**
  * @brief A class that solves a so-called "pressure-diffusive" fluid neutral model.
@@ -81,7 +82,7 @@ private:
     SplineXNeutralsBuilder const& m_spline_builder_on_Xn;
     SplineXn_GridXnEvaluator const& m_spline_evaluator_on_Xn;
 
-    SplineXBuilder const& m_spline_builder_on_X;
+    SplineInterpolatorX::BuilderType const& m_spline_builder_on_X;
     GridNeutralInterpolator const& m_interpolator;
 
     DConstFieldVx const m_quadrature_coeffs;
@@ -114,7 +115,7 @@ public:
             double const mean_free_path,
             SplineXNeutralsBuilder const& spline_builder_on_Xn,
             SplineXn_GridXnEvaluator const& spline_evaluator_on_Xn,
-            SplineXBuilder const& spline_builder_on_X,
+            SplineInterpolatorX::BuilderType const& spline_builder_on_X,
             GridNeutralInterpolator const& interpolator_from_X_to_Xn,
             DConstFieldVx const& quadrature_coeffs,
             NeutralFluxBoundaryCondition flux_BC,

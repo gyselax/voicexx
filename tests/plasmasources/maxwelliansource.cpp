@@ -41,9 +41,6 @@ TEST(MaxwellianSource, Moments)
     IdxRangeX idx_range_x(SplineInterpPointsX::get_domain<GridX>());
     IdxRangeVx idx_range_vx(SplineInterpPointsVx::get_domain<GridVx>());
 
-    SplineXBuilder const builder_x(idx_range_x);
-    SplineVxBuilder const builder_vx(idx_range_vx);
-
     host_t<DFieldMemX> quadrature_coeffs_x
             = trapezoid_quadrature_coefficients<Kokkos::DefaultHostExecutionSpace>(idx_range_x);
     host_t<DFieldMemVx> quadrature_coeffs_vx

@@ -15,7 +15,7 @@ struct BSplinesXNeutrals : ddc::UniformBSplines<X, BSDegreeXNeutrals>
 };
 
 auto constexpr SplineXNeutralsBoundary
-        = X::PERIODIC ? ddc::BoundCond::PERIODIC : ddc::BoundCond::GREVILLE;
+        = X::PERIODIC ? ddc::SplineBuilderClosure::PERIODIC : ddc::SplineBuilderClosure::GREVILLE;
 using SplineInterpPointsXNeutrals = ddc::GrevilleInterpolationPoints<
         BSplinesXNeutrals,
         SplineXNeutralsBoundary,

@@ -42,7 +42,7 @@
 #include "species_info.hpp"
 #include "species_init.hpp"
 #include "spline_definitions_xvx.hpp"
-#include "spline_interpolator.hpp"
+#include "spline_interpolation.hpp"
 #include "splitrighthandsidesolver.hpp"
 #include "splitvlasovsolver.hpp"
 
@@ -103,8 +103,8 @@ int main(int argc, char** argv)
     IdxRangeSpXVx const meshSpXVx(idx_range_kinsp, meshXVx);
     IdxRangeSpVx const meshSpVx(idx_range_kinsp, mesh_vx);
 
-    SplineXBuilder const builder_x(mesh_x);
-    SplineVxBuilder const builder_vx(mesh_vx);
+    SplineInterpolatorX spline_interpolation_x(mesh_x);
+    SplineInterpolatorVx spline_interpolation_vx(mesh_vx);
 
     // Initialisation of the distribution function
     DFieldMemSpVx allfequilibrium(meshSpVx);
@@ -135,26 +135,10 @@ int main(int argc, char** argv)
     int const nbstep_diag = int(time_diag / deltat);
 
     // Creating operators
-#ifdef PERIODIC_RDIMX
-    ddc::PeriodicExtrapolationRule<X> bv_x_min;
-    ddc::PeriodicExtrapolationRule<X> bv_x_max;
-    SplineXEvaluator const spline_x_evaluator(bv_x_min, bv_x_max);
-#else
-    ddc::ConstantExtrapolationRule<X> bv_x_min(ddc::coordinate(mesh_x.front()));
-    ddc::ConstantExtrapolationRule<X> bv_x_max(ddc::coordinate(mesh_x.back()));
-    SplineXEvaluator const spline_x_evaluator(bv_x_min, bv_x_max);
-#endif
 
-    ddc::ConstantExtrapolationRule<Vx> bv_vx_min(ddc::coordinate(mesh_vx.front()));
-    ddc::ConstantExtrapolationRule<Vx> bv_vx_max(ddc::coordinate(mesh_vx.back()));
-    SplineVxEvaluator const spline_vx_evaluator(bv_vx_min, bv_vx_max);
-    PreallocatableSplineInterpolator const
-            spline_x_interpolator(builder_x, spline_x_evaluator, meshXVx);
-    PreallocatableSplineInterpolator const
-            spline_vx_interpolator(builder_vx, spline_vx_evaluator, meshXVx);
-
-    BslAdvectionSpatial<GeometryXVx, GridX> const advection_x(spline_x_interpolator);
-    BslAdvectionVelocity<GeometryXVx, GridVx> const advection_vx(spline_vx_interpolator);
+    BslAdvectionSpatial<GeometryXVx, SplineInterpolatorX> const advection_x(spline_interpolation_x);
+    BslAdvectionVelocity<GeometryXVx, SplineInterpolatorVx> const advection_vx(
+            spline_interpolation_vx);
 
     // list of rhs operators
     std::vector<std::reference_wrapper<IRightHandSide const>> rhs_operators;
@@ -194,8 +178,9 @@ int main(int argc, char** argv)
                     PCpp_double(conf_krook, ".temperature"));
             rhs_operators.emplace_back(krook_source_adaptive_vector.back());
         } else {
-            throw std::invalid_argument("Invalid krook name, allowed values are: 'constant', or "
-                                        "'adaptive'.");
+            throw std::invalid_argument(
+                    "Invalid krook name, allowed values are: 'constant', or "
+                    "'adaptive'.");
         }
     }
 
@@ -216,8 +201,9 @@ int main(int argc, char** argv)
     SplitVlasovSolver const vlasov(advection_x, advection_vx);
     SplitRightHandSideSolver const boltzmann(vlasov, rhs_operators);
 
-    DFieldMemVx const quadrature_coeffs(neumann_spline_quadrature_coefficients<
-                                        Kokkos::DefaultExecutionSpace>(mesh_vx, builder_vx));
+    DFieldMemVx const quadrature_coeffs(
+            neumann_spline_quadrature_coefficients<
+                    Kokkos::DefaultExecutionSpace>(mesh_vx, spline_interpolation_vx.get_builder()));
 
     ChargeDensityCalculator rhs(get_const_field(quadrature_coeffs));
 
@@ -226,7 +212,7 @@ int main(int argc, char** argv)
 #if defined(PERIODIC_RDIMX) && !defined(INPUT_MESH)
     FFTPoissonSolver<IdxRangeX, IdxRangeX, Kokkos::DefaultExecutionSpace> poisson_solver(mesh_x);
 #else
-    FEM1DPoissonSolver poisson_solver(builder_x, spline_x_evaluator);
+    FEM1DPoissonSolver poisson_solver(spline_interpolation_x);
 #endif
     QNSolver const poisson(poisson_solver, rhs);
 

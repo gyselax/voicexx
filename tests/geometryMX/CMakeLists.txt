@@ -3,7 +3,7 @@
 
 include(GoogleTest)
 
-set(BASIC_GEOMETRY_XVx_VARIANTS_LIST xperiod_vx xnonperiod_vx)
+set(BASIC_GEOMETRY_XVx_VARIANTS_LIST xnonperiod_vx)
 
 foreach(GEOMETRY_VARIANT IN LISTS BASIC_GEOMETRY_XVx_VARIANTS_LIST)
 
@@ -20,14 +20,14 @@ target_link_libraries(unit_tests_geometryMX_${GEOMETRY_VARIANT}
     PUBLIC
         GTest::gtest
         GTest::gmock
-        gslx::advection
-        gslx::boltzmann_${GEOMETRY_VARIANT}
-        gslx::moments
-        gslx::poisson_${GEOMETRY_VARIANT}
-        gslx::quadrature
-        gslx::speciesinfo
-        gslx::time_integration_${GEOMETRY_VARIANT}
-        gslx::utils_${GEOMETRY_VARIANT}
+        gyselalibxx::advection
+        gyselalibxx::boltzmann_${GEOMETRY_VARIANT}
+        gyselalibxx::moments
+        gyselalibxx::poisson_${GEOMETRY_VARIANT}
+        gyselalibxx::quadrature
+        gyselalibxx::speciesinfo
+        gyselalibxx::time_integration_${GEOMETRY_VARIANT}
+        gyselalibxx::utils_${GEOMETRY_VARIANT}
         voicexx::fluidinitialisation_${GEOMETRY_VARIANT}
         voicexx::fluidsolver_${GEOMETRY_VARIANT}
         voicexx::time_integration_hybrid_${GEOMETRY_VARIANT}

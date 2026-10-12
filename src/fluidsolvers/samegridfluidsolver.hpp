@@ -65,8 +65,8 @@ private:
 
     double const m_mean_free_path;
 
-    SplineXBuilder const& m_spline_x_builder;
-    SplineXEvaluator const& m_spline_x_evaluator;
+    SplineInterpolatorX::BuilderType const& m_spline_x_builder;
+    SplineInterpolatorX::EvaluatorType const& m_spline_x_evaluator;
 
     DConstFieldVx const m_quadrature_coeffs;
 
@@ -95,8 +95,8 @@ public:
             IReactionRate const& ionisation,
             IReactionRate const& recombination,
             double const mean_free_path,
-            SplineXBuilder const& spline_x_builder,
-            SplineXEvaluator const& spline_x_evaluator,
+            SplineInterpolatorX::BuilderType const& spline_x_builder,
+            SplineInterpolatorX::EvaluatorType const& spline_x_evaluator,
             DConstFieldVx const& quadrature_coeffs,
             double const mask_extent,
             double const mask_stiffness,

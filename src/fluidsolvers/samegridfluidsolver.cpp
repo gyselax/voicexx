@@ -7,14 +7,15 @@
 #include "mask_tanh.hpp"
 #include "rk2.hpp"
 #include "samegridfluidsolver.hpp"
+#include "spline_definitions_xvx.hpp"
 
 SameGridFluidSolver::SameGridFluidSolver(
         IReactionRate const& charge_exchange,
         IReactionRate const& ionisation,
         IReactionRate const& recombination,
         double const mean_free_path,
-        SplineXBuilder const& spline_x_builder,
-        SplineXEvaluator const& spline_x_evaluator,
+        SplineInterpolatorX::BuilderType const& spline_x_builder,
+        SplineInterpolatorX::EvaluatorType const& spline_x_evaluator,
         DConstFieldVx const& quadrature_coeffs,
         double const neutrals_wall_extent,
         double const neutrals_wall_stiffness,

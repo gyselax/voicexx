@@ -14,6 +14,7 @@
 #include "ireactionrate.hpp"
 #include "rk2.hpp"
 #include "species_info.hpp"
+#include "spline_definitions_xvx.hpp"
 
 DiffGridsFluidSolver::DiffGridsFluidSolver(
         IReactionRate const& charge_exchange,
@@ -22,7 +23,7 @@ DiffGridsFluidSolver::DiffGridsFluidSolver(
         double const mean_free_path,
         SplineXNeutralsBuilder const& spline_builder_on_Xn,
         SplineXn_GridXnEvaluator const& spline_evaluator_on_Xn,
-        SplineXBuilder const& spline_builder_on_X,
+        SplineInterpolatorX::BuilderType const& spline_builder_on_X,
         GridNeutralInterpolator const& interpolator,
         DConstFieldVx const& quadrature_coeffs,
         NeutralFluxBoundaryCondition flux_BC,

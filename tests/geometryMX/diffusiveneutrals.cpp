@@ -45,8 +45,7 @@ TEST(GeometryMX, DiffusiveNeutralsDerivative)
     IdxRangeVx meshVx(SplineInterpPointsVx::get_domain<GridVx>());
     IdxRangeXVx meshXVx(meshX, meshVx);
 
-    SplineXBuilder const builder_x(meshX);
-    SplineVxBuilder const builder_vx(meshVx);
+    SplineInterpolatorX const interpolator_x(meshX);
 
     // Kinetic species index range initialisation
     IdxStepSp const nb_kinspecies(2);
@@ -124,16 +123,6 @@ TEST(GeometryMX, DiffusiveNeutralsDerivative)
     double const normalisation_coeff(1.);
 
     // Splines
-#ifdef PERIODIC_RDIMX
-    ddc::PeriodicExtrapolationRule<X> bv_x_min;
-    ddc::PeriodicExtrapolationRule<X> bv_x_max;
-#else
-    ddc::ConstantExtrapolationRule<X> bv_x_min(x_min);
-    ddc::ConstantExtrapolationRule<X> bv_x_max(x_max);
-#endif
-
-    SplineXEvaluator const spline_x_evaluator(bv_x_min, bv_x_max);
-
     DFieldMemVx quadrature_coeffs_alloc(
             trapezoid_quadrature_coefficients<Kokkos::DefaultExecutionSpace>(meshVx));
     DFieldVx const quadrature_coeffs = get_field(quadrature_coeffs_alloc);
@@ -149,8 +138,8 @@ TEST(GeometryMX, DiffusiveNeutralsDerivative)
             ionisation,
             recombination,
             normalisation_coeff,
-            builder_x,
-            spline_x_evaluator,
+            interpolator_x.get_builder(),
+            interpolator_x.get_evaluator(),
             get_const_field(quadrature_coeffs),
             neutrals_wall_extent,
             neutrals_wall_stiffness,

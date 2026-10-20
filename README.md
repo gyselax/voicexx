@@ -10,31 +10,45 @@ First, clone this repository and run the following command to initialise the sub
 ```
 git submodule update --recursive --init
 ```
-Then we need to source the correct environment.
+Then we need to source the correct environment (if the installation is done on
+a known machine), or to install it (if installing on a new machine).
 For a list of available environments, see the [toolchains](./gyselalibxx/toolchains) folder,
 and particularly the following [documentation](https://gyselax.github.io/gyselalibxx/toolchains/index.html#available_systems).
 
-In the particular case of persee, run
+In the particular case of persee (gpu), run
 ```
 . gyselalibxx/toolchains/persee/v100/environment.sh
 ```
+For a new machine (cpu), run
+```
+. gyselalibxx/toolchains/cpu.spack.gyselalibxx_env/prepare.sh
+```
+You can verify that the spack installation worked by using
+```
+spack env list
+```
+and checking that the right environment is selected.
+
 
 ## Building
 
 For building, create a build folder and run
 ```
-cmake -S <VOICE> -B build -DCMAKE_TOOLCHAIN_FILE=gyselalibxx/toolchains/<MACHINE>/toolchain.cmake
+mkdir build
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=gyselalibxx/toolchains/<MACHINE>/toolchain.cmake
 cd build && make -j 4
 ```
 
 ## Running
 
 After compilation, the executables will be available in the [bin](./bin) folder.
+The executables of interest are `sheath_xnonperiod_vx` and `sheath_xnonperiod_vx_user_defined_grid`
 To execute them, enter the following commands.
 ```
 ./sheath_xnonperiod_vx --dump-config param.yaml
 ./sheath_xnonperiod_vx param.yaml
 ```
+The first one produces a default input file, and the second line launches the program.
 
 Post-process functions are available in [post-process](./post-process/).
 For documentation see this [readme](./post-process/README.md).
